@@ -22,7 +22,7 @@ router.get('/heart-beat', () => {
   });
 });
 
-router.get('/record/:id', validateId, async (req, env) => {
+router.get('/record/@:id', validateId, async (req, env) => {
   const { id } = req.params;
 
   const num = await getNum(env.DB, id);
@@ -30,7 +30,7 @@ router.get('/record/:id', validateId, async (req, env) => {
   return json({ id, num });
 });
 
-router.get('/:id', validateId, async (req, env) => {
+router.get('/@:id', validateId, async (req, env) => {
   const { id } = req.params;
   let { theme } = req.query;
 
