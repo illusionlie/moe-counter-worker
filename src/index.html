@@ -10,10 +10,10 @@
       content="这是一个萌萌的访客计数器，可以嵌入到 Markdown、网页或者其他任何地方，有多种风格可选。"
     />
     <meta name="keywords" content="moe, visitor counter, 访客计数器, Cloudflare Workers" />
-    <meta name="author" content="柃夏chapu" />
+    <meta name="author" content="柃夏chapu, illusionlie" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://moe-counter.lxchapu.com/" />
+    <meta property="og:url" content="" data-current-url />
     <meta property="og:title" content="Moe Counter" />
     <meta
       property="og:description"
@@ -22,7 +22,7 @@
     <meta property="og:image" content="https://s2.loli.net/2024/03/05/3XO1azMjC589Fd6.webp" />
 
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://moe-counter.lxchapu.com/" />
+    <meta property="twitter:url" content="" data-current-url />
     <meta property="twitter:title" content="Moe Counter" />
     <meta
       property="twitter:description"
@@ -39,20 +39,20 @@
   </head>
   <body>
     <p>
-      This is a fork of <a href="https://github.com/journey-ad/Moe-Counter" target="_blank">Moe Counter</a>, based on
+      This is a fork of <a href="https://github.com/lxchapu/moe-counter">fork</a> of <a href="https://github.com/journey-ad/Moe-Counter" target="_blank">Moe Counter</a>, based on
       <a href="https://workers.cloudflare.com/" target="_blank">Cloudflare Workers</a>.
     </p>
 
     <h3>How to use:</h3>
     <h5>SVG address</h5>
-    <code>https://moe-counter.lxchapu.com/@:id</code>
+    <code data-counter-url="/@:id"></code>
     <h5>Img tag</h5>
-    <code>&lt;img src="https://moe-counter.lxchapu.com/@:id" alt=":id" /&gt;</code>
+    <code data-counter-snippet="/@:id"></code>
     <h5>Markdown</h5>
-    <code>![:id](https://moe-counter.lxchapu.com/@:id)</code>
+    <code data-counter-markdown="/@:id"></code>
 
     <h3>
-      eg:<img src="https://moe-counter.lxchapu.com/@github@moe-counter" alt="Moe Counter!" height="100" width="315" />
+      eg:<img data-counter-src="/@github@moe-counter" alt="Moe Counter!" height="100" width="315" />
     </h3>
     <em>Data can access by anyone, please <strong>DO NOT</strong> enter personal information</em>
 
@@ -62,20 +62,20 @@
       </summary>
       <p>
         Just use the query parameters <code>theme</code>, like this:
-        <code>https://moe-counter.lxchapu.com/@:id?theme=moebooru</code>
+        <code data-counter-url="/@:id?theme=moebooru"></code>
       </p>
       <h5>asoul</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=asoul" alt="A-SOUL" />
+      <img data-counter-src="/@demo?theme=asoul" alt="A-SOUL" />
       <h5>moebooru</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=moebooru" alt="Moebooru" />
+      <img data-counter-src="/@demo?theme=moebooru" alt="Moebooru" />
       <h5>moebooru-h</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=moebooru-h" alt="Moebooru-Hentai" />
+      <img data-counter-src="/@demo?theme=moebooru-h" alt="Moebooru-Hentai" />
       <h5>rule34</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=rule34" alt="Rule34" />
+      <img data-counter-src="/@demo?theme=rule34" alt="Rule34" />
       <h5>gelbooru</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=gelbooru" alt="Gelbooru" />
+      <img data-counter-src="/@demo?theme=gelbooru" alt="Gelbooru" />
       <h5>gelbooru-h</h5>
-      <img src="https://moe-counter.lxchapu.com/@demo?theme=gelbooru-h" alt="Gelbooru-Hentai" />
+      <img data-counter-src="/@demo?theme=gelbooru-h" alt="Gelbooru-Hentai" />
     </details>
 
     <h3>Credits</h3>
@@ -88,7 +88,7 @@
 
     <h3>Tool</h3>
     <div>
-      <code>https://moe-counter.lxchapu.com/@</code>
+      <code data-counter-url="/@"></code>
       <input
         id="name"
         type="text"
@@ -106,6 +106,33 @@
       </select>
       <button id="get">Get</button><img id="result" style="display: block" />
       <script>
+        var counterOrigin = window.location.origin;
+
+        function counterUrl(path) {
+          return counterOrigin + path;
+        }
+
+        document.querySelectorAll('[data-current-url]').forEach(function (el) {
+          el.content = window.location.href;
+        });
+
+        document.querySelectorAll('[data-counter-url]').forEach(function (el) {
+          el.textContent = counterUrl(el.dataset.counterUrl);
+        });
+
+        document.querySelectorAll('[data-counter-src]').forEach(function (el) {
+          el.src = counterUrl(el.dataset.counterSrc);
+        });
+
+        document.querySelectorAll('[data-counter-snippet]').forEach(function (el) {
+          var url = counterUrl(el.dataset.counterSnippet);
+          el.textContent = '<img src="' + url + '" alt=":id" />';
+        });
+
+        document.querySelectorAll('[data-counter-markdown]').forEach(function (el) {
+          el.textContent = '![:id](' + counterUrl(el.dataset.counterMarkdown) + ')';
+        });
+
         var btn = document.getElementById('get'),
           img = document.getElementById('result');
 
@@ -119,13 +146,13 @@
             return;
           }
 
-          img.src = 'https://moe-counter.lxchapu.com/@' + text + '?theme=' + theme;
+          img.src = counterUrl('/@' + text + '?theme=' + theme);
         });
       </script>
     </div>
 
     <p>
-      <a href="https://github.com/lxchapu/moe-counter" target="_blank">source code</a>
+      <a href="https://github.com/illusionlie/moe-counter-worker" target="_blank">source code</a>
     </p>
   </body>
 </html>
