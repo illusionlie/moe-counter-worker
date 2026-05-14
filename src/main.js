@@ -4,7 +4,7 @@ import { getNum, setNum } from './db.js';
 import { getCountImage } from './utils.js';
 import { validateId } from './middlewares.js';
 import indexHtml from './index.html';
-import themes from '../themes';
+import { resolveThemeId } from '../themes';
 import robots from './robots.txt';
 
 const router = Router();
@@ -34,14 +34,7 @@ const counterHandler = async (req, env) => {
   const { id } = req.params;
   let { theme, num, length, padding, ...rest } = req.query;
 
-  if (theme === 'random') {
-    const themeNames = Object.keys(themes);
-    theme = themeNames[Math.floor(Math.random() * themeNames.length)];
-  }
-
-  if (!theme || !themes[theme]) {
-    theme = config.theme;
-  }
+  theme = resolveThemeId(theme, config.theme);
 
   const customNum = Number(num);
   let count = 0;

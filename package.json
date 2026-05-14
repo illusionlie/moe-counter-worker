@@ -11,13 +11,13 @@
   },
   "devDependencies": {
     "clean-webpack-plugin": "^4.0.0",
-    "prettier": "^3.2.5",
-    "webpack": "^5.90.3",
-    "webpack-cli": "^5.1.4",
-    "wrangler": "^3.0.0",
+    "prettier": "^3.8.3",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2",
+    "wrangler": "^4.90.1",
     "yamljs": "^0.3.0"
   },
   "dependencies": {
-    "itty-router": "^4.0.27"
+    "itty-router": "^5.0.23"
   }
 }

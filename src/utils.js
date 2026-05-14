@@ -1,4 +1,4 @@
-import themes from '../themes';
+import { DEFAULT_THEME, getTheme } from '../themes';
 
 /**
  * @param {number|string} value
@@ -30,7 +30,7 @@ const toFixed = (num, precision = 5) => parseFloat(Number(num).toFixed(precision
  */
 const getCountImage = ({
   count,
-  theme = 'moebooru',
+  theme = DEFAULT_THEME,
   padding = 7,
   prefix = -1,
   offset = 0,
@@ -39,7 +39,7 @@ const getCountImage = ({
   pixelated = '1',
   darkmode = 'auto',
 }) => {
-  const themeData = themes[theme] || themes.moebooru;
+  const themeData = getTheme(theme);
   const normalizedPadding = clamp(parseInt(toFiniteNumber(padding, 7), 10), 0, 16);
   const normalizedPrefix = clamp(parseInt(toFiniteNumber(prefix, -1), 10), -1, 999999);
   const normalizedOffset = clamp(toFiniteNumber(offset, 0), -500, 500);
