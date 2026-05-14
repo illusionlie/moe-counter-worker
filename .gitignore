@@ -173,7 +173,3 @@ dist
 
 .DS_Store
 .ace-tool/
-.kilo/
-AGENTS.md
-.kilocode/
-.trellis/
