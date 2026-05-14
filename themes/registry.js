@@ -40,7 +40,8 @@ const getRandomThemeId = () => {
   return themeIds[Math.floor(Math.random() * themeIds.length)];
 };
 
-const resolveFallbackThemeId = (fallbackThemeId = DEFAULT_THEME) => (hasTheme(fallbackThemeId) ? fallbackThemeId : DEFAULT_THEME);
+const resolveFallbackThemeId = (fallbackThemeId = DEFAULT_THEME) =>
+  hasTheme(fallbackThemeId) ? fallbackThemeId : DEFAULT_THEME;
 
 const resolveThemeId = (themeId, fallbackThemeId = DEFAULT_THEME) => {
   if (themeId === 'random') {

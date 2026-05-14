@@ -1,11 +1,7 @@
-name = "moe-counter"
+name = "moe-counter-worker"
 main = "dist/worker.js"
-compatibility_date = "2024-02-27"
+compatibility_date = "2026-05-14"
 workers_dev = false
-
-[[routes]]
-pattern = "moe-counter.lxchapu.com"
-custom_domain = true
 
 [build]
 command = "npm run build"
@@ -15,4 +11,5 @@ directory = "./public"
 
 [[d1_databases]]
 binding = "DB"
+database_name = "count"
 database_id = "08323087-a0a9-44cb-a940-c82df8945a47"
