@@ -35,6 +35,130 @@
       strong {
         color: #ff4500;
       }
+
+      code {
+        word-break: break-all;
+      }
+
+      .tool table {
+        width: 100%;
+      }
+
+      .tool td:last-child {
+        min-width: 180px;
+      }
+
+      .tool input,
+      .tool select {
+        width: 100%;
+      }
+
+      .tool-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin: 16px 0;
+      }
+
+      #code,
+      #markdown-code,
+      #img-code {
+        display: block;
+        margin: 8px 0;
+        visibility: hidden;
+      }
+
+      #result {
+        display: block;
+        margin-top: 12px;
+        max-width: 100%;
+      }
+
+      input[type='checkbox'][role='switch'] {
+        height: 0;
+        width: 0;
+        visibility: hidden;
+        position: absolute;
+      }
+
+      input[type='checkbox'][role='switch'] + label {
+        cursor: pointer;
+        width: 3.6em;
+        height: 1.8em;
+        margin: 0;
+        background: #777;
+        display: block;
+        border-radius: 1.8em;
+        position: relative;
+        transition: 0.3s;
+      }
+
+      input[type='checkbox'][role='switch'] + label::after {
+        content: '';
+        position: absolute;
+        top: 0.1em;
+        left: 0.1em;
+        width: 1.6em;
+        height: 1.6em;
+        background: #fff;
+        border-radius: 1.6em;
+        transition: 0.3s;
+      }
+
+      input[type='checkbox'][role='switch'] + label span {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 12.5%;
+        font-size: 10px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      input[type='checkbox'][role='switch'] + label span::before {
+        content: 'ON';
+      }
+
+      input[type='checkbox'][role='switch'] + label span::after {
+        content: 'OFF';
+        color: #ddd;
+      }
+
+      input[type='checkbox'][role='switch']:checked + label {
+        background: #1f8f4d;
+      }
+
+      input[type='checkbox'][role='switch']:checked + label::after {
+        left: calc(100% - 0.1em);
+        transform: translateX(-100%);
+      }
+
+      @media (max-width: 640px) {
+        .tool table,
+        .tool thead,
+        .tool tbody,
+        .tool tr,
+        .tool th,
+        .tool td {
+          display: block;
+        }
+
+        .tool thead {
+          display: none;
+        }
+
+        .tool tr {
+          border-top: 1px solid #ddd;
+          padding: 10px 0;
+        }
+
+        .tool td:last-child {
+          min-width: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -87,24 +211,109 @@
     </ul>
 
     <h3>Tool</h3>
-    <div>
-      <code data-counter-url="/@"></code>
-      <input
-        id="name"
-        type="text"
-        placeholder=":name"
-        style="display: inline; width: 80px; margin: 0 4px; vertical-align: middle"
-      />
-      <code>?theme=</code>
-      <select id="theme" style="display: inline; margin: 0 4px; vertical-align: middle">
-        <option value="asoul">asoul</option>
-        <option value="moebooru">moebooru</option>
-        <option value="moebooru-h">moebooru-h</option>
-        <option value="rule34">rule34</option>
-        <option value="gelbooru">gelbooru</option>
-        <option value="gelbooru-h">gelbooru-h</option>
-      </select>
-      <button id="get">Get</button><img id="result" style="display: block" />
+    <div class="tool">
+      <table>
+        <thead>
+          <tr>
+            <th>Param</th>
+            <th>Description</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>name</code></td>
+            <td>Unique counter name</td>
+            <td><input id="name" type="text" placeholder=":name" maxlength="32" /></td>
+          </tr>
+          <tr>
+            <td><code>theme</code></td>
+            <td>Select a counter image theme, default is <code>moebooru</code></td>
+            <td>
+              <select id="theme">
+                <option value="random" selected>* random</option>
+                <option value="asoul">asoul</option>
+                <option value="moebooru">moebooru</option>
+                <option value="moebooru-h">moebooru-h</option>
+                <option value="rule34">rule34</option>
+                <option value="gelbooru">gelbooru</option>
+                <option value="gelbooru-h">gelbooru-h</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><code>padding</code></td>
+            <td>Set the minimum length, between 0-16, default is <code>7</code></td>
+            <td><input id="padding" type="number" value="7" min="0" max="16" step="1" inputmode="numeric" /></td>
+          </tr>
+          <tr>
+            <td><code>offset</code></td>
+            <td>Set the offset pixel value, between -500-500, default is <code>0</code></td>
+            <td><input id="offset" type="number" value="0" min="-500" max="500" step="1" /></td>
+          </tr>
+          <tr>
+            <td><code>scale</code></td>
+            <td>Set the image scale, between 0.1-2, default is <code>1</code></td>
+            <td><input id="scale" type="number" value="1" min="0.1" max="2" step="0.1" /></td>
+          </tr>
+          <tr>
+            <td><code>align</code></td>
+            <td>Set the image align, enum top/center/bottom, default is <code>top</code></td>
+            <td>
+              <select id="align">
+                <option value="top" selected>top</option>
+                <option value="center">center</option>
+                <option value="bottom">bottom</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><code>pixelated</code></td>
+            <td>Enable pixelated mode, enum 0/1, default is <code>1</code></td>
+            <td>
+              <input id="pixelated" type="checkbox" role="switch" checked />
+              <label for="pixelated"><span></span></label>
+            </td>
+          </tr>
+          <tr>
+            <td><code>darkmode</code></td>
+            <td>Enable dark mode, enum 0/1/auto, default is <code>auto</code></td>
+            <td>
+              <select id="darkmode">
+                <option value="auto" selected>auto</option>
+                <option value="1">yes</option>
+                <option value="0">no</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Unusual Options</strong></td>
+          </tr>
+          <tr>
+            <td><code>num</code></td>
+            <td>Set counter display number, 0 for disable, default is <code>0</code></td>
+            <td><input id="num" type="number" value="0" min="0" max="1000000000000000" step="1" inputmode="numeric" /></td>
+          </tr>
+          <tr>
+            <td><code>prefix</code></td>
+            <td>Set the prefix number, empty for disable</td>
+            <td><input id="prefix" type="number" value="" min="0" max="999999" step="1" inputmode="numeric" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tool-actions">
+        <button id="get" type="button">Generate</button>
+        <button id="copy-url" type="button" disabled>Copy URL</button>
+      </div>
+
+      <h5>Preview URL</h5>
+      <code id="code"></code>
+      <h5>Img tag</h5>
+      <code id="img-code"></code>
+      <h5>Markdown</h5>
+      <code id="markdown-code"></code>
+      <img id="result" alt="Moe Counter preview" />
       <script>
         var counterOrigin = window.location.origin;
 
@@ -133,20 +342,107 @@
           el.textContent = '![:id](' + counterUrl(el.dataset.counterMarkdown) + ')';
         });
 
-        var btn = document.getElementById('get'),
-          img = document.getElementById('result');
+        var btn = document.getElementById('get');
+        var copyBtn = document.getElementById('copy-url');
+        var img = document.getElementById('result');
+        var code = document.getElementById('code');
+        var imgCode = document.getElementById('img-code');
+        var markdownCode = document.getElementById('markdown-code');
+        var fields = {
+          name: document.getElementById('name'),
+          theme: document.getElementById('theme'),
+          padding: document.getElementById('padding'),
+          offset: document.getElementById('offset'),
+          align: document.getElementById('align'),
+          scale: document.getElementById('scale'),
+          pixelated: document.getElementById('pixelated'),
+          darkmode: document.getElementById('darkmode'),
+          num: document.getElementById('num'),
+          prefix: document.getElementById('prefix'),
+        };
 
-        btn.addEventListener('click', function () {
-          var name = document.getElementById('name'),
-            themeEl = document.getElementById('theme');
-          var text = name.value ? name.value.trim() : '';
-          var theme = themeEl.value || 'moebooru';
-          if (!text) {
+        function clampNumber(value, fallback, min, max) {
+          var num = Number(value);
+          if (!Number.isFinite(num)) {
+            num = fallback;
+          }
+          return Math.min(Math.max(num, min), max);
+        }
+
+        function buildPreviewUrl() {
+          var name = fields.name.value.trim();
+          if (!name) {
+            return '';
+          }
+
+          var params = new URLSearchParams();
+          params.set('theme', fields.theme.value || 'moebooru');
+          params.set('padding', String(clampNumber(fields.padding.value, 7, 0, 16)));
+          params.set('offset', String(clampNumber(fields.offset.value, 0, -500, 500)));
+          params.set('align', fields.align.value || 'top');
+          params.set('scale', String(clampNumber(fields.scale.value, 1, 0.1, 2)));
+          params.set('pixelated', fields.pixelated.checked ? '1' : '0');
+          params.set('darkmode', fields.darkmode.value || 'auto');
+
+          var num = clampNumber(fields.num.value, 0, 0, 1000000000000000);
+          if (num > 0) {
+            params.set('num', String(Math.trunc(num)));
+          }
+
+          if (fields.prefix.value !== '') {
+            var prefix = clampNumber(fields.prefix.value, 0, 0, 999999);
+            params.set('prefix', String(Math.trunc(prefix)));
+          }
+
+          return counterUrl('/@' + encodeURIComponent(name) + '?' + params.toString());
+        }
+
+        function selectCodeText(event) {
+          event.preventDefault();
+          var range = document.createRange();
+          var selection = window.getSelection();
+          range.selectNodeContents(event.currentTarget);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+
+        function renderPreview() {
+          var url = buildPreviewUrl();
+          if (!url) {
             alert('Please input counter name.');
             return;
           }
 
-          img.src = counterUrl('/@' + text + '?theme=' + theme);
+          var cacheBustUrl = url + '&_=' + Math.random();
+          img.src = cacheBustUrl;
+          code.textContent = url;
+          imgCode.textContent = '<img src="' + url + '" alt="' + fields.name.value.trim() + '" />';
+          markdownCode.textContent = '![' + fields.name.value.trim() + '](' + url + ')';
+          code.style.visibility = 'visible';
+          imgCode.style.visibility = 'visible';
+          markdownCode.style.visibility = 'visible';
+          copyBtn.disabled = false;
+        }
+
+        btn.addEventListener('click', renderPreview);
+
+        copyBtn.addEventListener('click', function () {
+          if (!code.textContent) {
+            return;
+          }
+          navigator.clipboard.writeText(code.textContent);
+        });
+
+        [code, imgCode, markdownCode].forEach(function (el) {
+          el.addEventListener('click', selectCodeText);
+        });
+
+        Object.keys(fields).forEach(function (key) {
+          fields[key].addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              renderPreview();
+            }
+          });
         });
       </script>
     </div>
