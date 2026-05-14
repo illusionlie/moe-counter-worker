@@ -24,4 +24,11 @@ export default [
       'prefer-const': 'warn',
     },
   },
+  // logger 模块允许使用 console（它是唯一的日志出口）
+  {
+    files: ['src/logger.js'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ];

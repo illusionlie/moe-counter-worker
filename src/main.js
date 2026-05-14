@@ -1,13 +1,18 @@
-import { Router, error, json } from 'itty-router';
+import { Router, json } from 'itty-router';
 import config from '../config.yml';
 import { getNum, setNum } from './db.js';
 import { getCountImage } from './utils.js';
-import { validateId } from './middlewares.js';
+import { withRequestTracing, withResponseLogging, validateId } from './middlewares.js';
 import { resolveThemeId } from '../themes';
+import { handleError } from './errors.js';
+import { createLogger } from './logger.js';
 
-const router = Router();
+const router = Router({
+  before: [withRequestTracing],
+  finally: [withResponseLogging],
+});
 
-router.get('/favicon.ico', () => error(404));
+router.get('/favicon.ico', () => new Response(null, { status: 404 }));
 
 router.get('/heart-beat', () => {
   return new Response('alive', {
@@ -20,14 +25,16 @@ router.get('/heart-beat', () => {
 router.get('/record/@:id', validateId, async (req, env) => {
   const { id } = req.params;
 
-  const num = await getNum(env.DB, id);
+  const num = await getNum(env.DB, id, req.logger);
 
   return json({ name: id, num });
 });
 
 const counterHandler = async (req, env) => {
   const { id } = req.params;
-  let { theme, num, length, padding, ...rest } = req.query;
+  const { num, length, theme: rawTheme, padding: rawPadding, ...rest } = req.query;
+  let theme = rawTheme;
+  let padding = rawPadding;
 
   theme = resolveThemeId(theme, config.theme);
 
@@ -40,9 +47,13 @@ const counterHandler = async (req, env) => {
   } else if (Number.isInteger(customNum) && customNum > 0 && customNum <= 1e15) {
     count = customNum;
   } else {
-    count = await getNum(env.DB, id);
+    count = await getNum(env.DB, id, req.logger);
     count += 1;
-    await setNum(env.DB, id, count);
+    await setNum(env.DB, id, count, req.logger);
+
+    if (req.logger) {
+      req.logger.debug('Counter incremented', { counterId: id, newValue: count });
+    }
   }
 
   const image = getCountImage({
@@ -63,12 +74,18 @@ const counterHandler = async (req, env) => {
 router.get('/@:id', validateId, counterHandler);
 router.get('/get/@:id', validateId, counterHandler);
 
-router.all('*', () => error(404));
+router.all('*', () => new Response(JSON.stringify({ error: { code: 'NOT_FOUND', message: 'Not Found' } }), {
+  status: 404,
+  headers: { 'Content-Type': 'application/json; charset=utf-8' },
+}));
 
 export default {
-  fetch: (req, ...args) =>
-    router
-      .handle(req, ...args)
-      .then(json)
-      .catch(error),
+  fetch: (req, ...args) => {
+    // 创建一个 fallback logger 用于路由级别之外的错误
+    const fallbackLogger = createLogger({ phase: 'router' });
+
+    return router
+      .fetch(req, ...args)
+      .catch((err) => handleError(err, req.logger || fallbackLogger));
+  },
 };
