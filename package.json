@@ -6,11 +6,16 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "build": "webpack",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
     "prettier": "prettier --write .",
     "initdb": "wrangler d1 execute count --local --file=./schema.sql"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^4.0.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
     "prettier": "^3.8.3",
     "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2",
