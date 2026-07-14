@@ -82,11 +82,14 @@ fetch(req, env)
 npm run build     # webpack 打包到 dist/worker.js
 npm run dev       # wrangler dev 本地起
 npm run deploy    # wrangler deploy 上线
-npm run initdb    # wrangler d1 execute count --local --file=./schema.sql （本地建表）
+npm run initdb    # wrangler d1 execute DB --local --file=./schema.sql （本地建表）
+npm run test      # node --test "test/**/*.test.mjs"（零额外依赖）
 npm run lint      # eslint src/
 npm run lint:fix
 npm run prettier  # 格式化全仓
 ```
+
+> 生产部署走 GitHub Actions（`.github/workflows/deploy.yml`，`workflow_dispatch` 触发）：从 `wrangler.toml.example` 用 `sed` 渲染出 `wrangler.toml`，自动建表（运行 `schema.sql`），再调 `cloudflare/wrangler-action` 发布。所需机密见 README「Usage」。`wrangler.toml` 已加入 `.gitignore`，本地跑前从 `wrangler.toml.example` 复制一份。
 
 部署前必做的事：
 
