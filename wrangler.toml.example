@@ -1,0 +1,13 @@
+name = "__WORKER_NAME__"
+main = "dist/worker.js"
+compatibility_date = "2026-07-14"
+
+[build]
+command = "npm run build"
+
+[assets]
+directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_id = "__D1_DATABASE_ID__"

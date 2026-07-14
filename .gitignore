@@ -173,3 +173,5 @@ dist
 
 .DS_Store
 .ace-tool/
+
+wrangler.toml
