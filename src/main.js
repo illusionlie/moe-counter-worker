@@ -1,6 +1,6 @@
 import { Router, json } from 'itty-router';
 import config from '../config.yml';
-import { getNum, setNum } from './db.js';
+import { getNum, incrementCounter } from './db.js';
 import { getCountImage } from './utils.js';
 import { withRequestTracing, withResponseLogging, validateId } from './middlewares.js';
 import { resolveThemeId } from '../themes/index.js';
@@ -47,9 +47,7 @@ const counterHandler = async (req, env) => {
   } else if (Number.isInteger(customNum) && customNum > 0 && customNum <= 1e15) {
     count = customNum;
   } else {
-    count = await getNum(env.DB, id, req.logger);
-    count += 1;
-    await setNum(env.DB, id, count, req.logger);
+    count = await incrementCounter(env.DB, id, req.logger);
 
     if (req.logger) {
       req.logger.debug('Counter incremented', { counterId: id, newValue: count });
