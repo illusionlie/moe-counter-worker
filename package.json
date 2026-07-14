@@ -1,15 +1,17 @@
 {
-  "name": "moe-counter",
-  "version": "0.0.0",
+  "name": "moe-counter-worker",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "build": "webpack",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
+    "test": "node --test \"test/**/*.test.mjs\"",
     "prettier": "prettier --write .",
-    "initdb": "wrangler d1 execute count --local --file=./schema.sql"
+    "initdb": "wrangler d1 execute DB --local --file=./schema.sql"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^4.0.0",

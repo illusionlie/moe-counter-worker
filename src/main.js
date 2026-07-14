@@ -3,7 +3,7 @@ import config from '../config.yml';
 import { getNum, setNum } from './db.js';
 import { getCountImage } from './utils.js';
 import { withRequestTracing, withResponseLogging, validateId } from './middlewares.js';
-import { resolveThemeId } from '../themes';
+import { resolveThemeId } from '../themes/index.js';
 import { handleError } from './errors.js';
 import { createLogger } from './logger.js';
 
